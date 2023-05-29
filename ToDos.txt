@@ -2,4 +2,6 @@ amor
 felicidad
 pasion
 Stop
-Stop
+pop
+Tip
+perros
