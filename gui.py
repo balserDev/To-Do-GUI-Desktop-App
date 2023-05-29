@@ -24,6 +24,8 @@ while True:
             todos = functions.readfile()
             todos.append(values["todo"] + "\n")
             functions.writefile("toDos.txt", todos)
+
+            window["todos"].update(values=todos)
         case"Edit":
             todos = functions.readfile()
 
@@ -36,6 +38,10 @@ while True:
             functions.writefile("toDos.txt", todos)
 
             print(values["todos"])
+
+            window["todos"].update(values=todos)
+        case "todos":
+            window["todo"].update(value=values["todos"][0])
         case sg.WIN_CLOSED:
             break
 
