@@ -1,6 +1,10 @@
 import functions
 import PySimpleGUI as sg
+import time
 
+sg.theme("LightBrown4")
+
+clock = sg.Text("", key="Clock")
 label = sg.Text("Type in a to-do")
 input_box = sg.InputText(tooltip="Enter a to do", key="todo")
 add_button = sg.Button("Add")
@@ -11,15 +15,16 @@ lis_box = sg.Listbox(values=functions.readfile(), key="todos",
                      enable_events=True, size=[45, 10])
 
 window = sg.Window("My To Do App", layout=[
+    [clock],
     [label],
     [input_box, add_button],
     [lis_box],
     [edit_button, complete_button, exit_button]
 ], font=("Helvetica", 10))
 
-
 while True:
-    event, values = window.read()
+    event, values = window.read(timeout=100)
+    window["Clock"].update(value=time.strftime("%Y-%M-%d, %H:%M:%S"))
     print(event, values)
     match event:
         case"Add":
@@ -29,35 +34,42 @@ while True:
 
             window["todos"].update(values=todos)
         case"Edit":
-            todos = functions.readfile()
+            try:
+                todos = functions.readfile()
 
-            todo_edit = values["todos"][0]
-            new_todo = values["todo"]
+                todo_edit = values["todos"][0]
+                new_todo = values["todo"]
 
-            index = todos.index(todo_edit)
-            todos[index] = new_todo + "\n"
+                index = todos.index(todo_edit)
+                todos[index] = new_todo + "\n"
 
-            functions.writefile("toDos.txt", todos)
+                functions.writefile("toDos.txt", todos)
 
-            print(values["todos"])
+                print(values["todos"])
 
-            window["todos"].update(values=todos)
+                window["todos"].update(values=todos)
+            except IndexError:
+                sg.popup("There is not an item to edit")
+
         case "todos":
             window["todo"].update(value=values["todos"][0])
         case"Complete":
-            todos = functions.readfile()
+            try:
+                todos = functions.readfile()
 
-            Value_To_Delete = values["todos"][0]
+                Value_To_Delete = values["todos"][0]
 
-            print(f"Value seek {Value_To_Delete}")
-            print(todos)
+                print(f"Value seek {Value_To_Delete}")
+                print(todos)
 
-            todos.remove(Value_To_Delete)
+                todos.remove(Value_To_Delete)
 
-            functions.writefile("toDos.txt", todos)
+                functions.writefile("toDos.txt", todos)
 
-            window["todos"].update(values=todos)
-            print("")
+                window["todos"].update(values=todos)
+                print("")
+            except IndexError:
+                sg.popup("There is not an item to complete")
         case"exit":
             exit()
         case sg.WIN_CLOSED:
